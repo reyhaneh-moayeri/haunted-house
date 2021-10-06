@@ -84,6 +84,7 @@ floor.geometry.setAttribute(
 );
 floor.rotation.x = -Math.PI * 0.5;
 floor.position.y = 0;
+floor.receiveShadow = true;
 scene.add(floor);
 
 const house = new THREE.Group();
@@ -97,6 +98,7 @@ const walls = new THREE.Mesh(
     normalMap: wallNormalTexture,
   })
 );
+walls.castShadow = true;
 walls.position.y = 1.25;
 
 const roof = new THREE.Mesh(
@@ -105,6 +107,7 @@ const roof = new THREE.Mesh(
 );
 roof.rotation.y = Math.PI * 0.25;
 roof.position.y = 2.5 + 0.5;
+roof.castShadow = true;
 const door = new THREE.Mesh(
   new THREE.PlaneBufferGeometry(2, 2, 100, 100),
   new THREE.MeshStandardMaterial({
@@ -152,6 +155,11 @@ bush4.position.set(-1.2, 0.2, 3);
 bush4.scale.set(0.2, 0.2, 0.2);
 house.add(bush1, bush2, bush3, bush4);
 
+bush1.castShadow = true;
+bush2.castShadow = true;
+bush3.castShadow = true;
+bush4.castShadow = true;
+
 const graves = new THREE.Group();
 
 const graveGeopmetry = new THREE.BoxBufferGeometry(0.6, 0.8, 0.2);
@@ -159,6 +167,7 @@ const graveMaterial = new THREE.MeshStandardMaterial({ color: "#cfe1b9" });
 
 for (let i = 0; i < 40; i++) {
   const grave = new THREE.Mesh(graveGeopmetry, graveMaterial);
+  grave.castShadow = true;
 
   const angel = Math.random() * Math.PI * 2;
   const radius = 3 + Math.random() * 6;
@@ -188,9 +197,14 @@ gui.add(moonLight.position, "y").min(-5).max(5).step(0.001);
 gui.add(moonLight.position, "z").min(-5).max(5).step(0.001);
 scene.add(moonLight);
 
+moonLight.castShadow = true;
 const doorLight = new THREE.PointLight("#ff7d46", 1.3, 7);
 doorLight.position.set(0, 2.2, 2.5);
 scene.add(doorLight);
+doorLight.castShadow = true;
+doorLight.shadow.mapSize.width = 256;
+doorLight.shadow.mapSize.height = 256;
+doorLight.shadow.camera.far = 7;
 
 const ghost1 = new THREE.PointLight("#ff00ff", 2, 3);
 scene.add(ghost1);
@@ -198,6 +212,18 @@ const ghost2 = new THREE.PointLight("#00ffff", 2, 3);
 scene.add(ghost2);
 const ghost3 = new THREE.PointLight("#ffffff", 2, 3);
 scene.add(ghost3);
+ghost1.castShadow = true;
+ghost2.castShadow = true;
+ghost3.castShadow = true;
+ghost1.shadow.mapSize.width = 256;
+ghost1.shadow.mapSize.height = 256;
+ghost1.shadow.camera.far = 7;
+ghost2.shadow.mapSize.width = 256;
+ghost2.shadow.mapSize.height = 256;
+ghost2.shadow.camera.far = 7;
+ghost3.shadow.mapSize.width = 256;
+ghost3.shadow.mapSize.height = 256;
+ghost3.shadow.camera.far = 7;
 /**
  * Sizes
  */
@@ -248,7 +274,8 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setClearColor("#262837");
-
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /**
  * Animate
  */
